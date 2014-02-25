@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Google Picker Example</title>
+
+    <!-- The standard Google Loader script. -->
+    <script src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+    // Google Picker API for the Google Docs import
+    function newPicker() {
+        google.load('picker', '1', {"callback" : createPicker});
+    }
+
+    // Create and render a Picker object for searching images.
+    function createPicker() {
+        var picker = new google.picker.PickerBuilder().
+            addView((new google.picker.ImageSearchView).setLicense(google.picker.ImageSearchView.License.REUSE)).
+            addView(google.picker.ViewId.DOCS).
+            addView(new google.picker.DocsUploadView()).
+            addView(google.picker.ViewId.WEBCAM).
+            addView(google.picker.ViewId.VIDEO_SEARCH).
+            addView(google.picker.ViewId.YOUTUBE).
+            addView(google.picker.ViewId.MAPS).
+            setCallback(pickerCallback).
+            build();
+        picker.setVisible(true);
+    }
+
+    // A simple callback implementation.
+    function pickerCallback(data) {
+      var url = 'nothing';
+      if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+        var doc = data[google.picker.Response.DOCUMENTS][0];
+        url = doc[google.picker.Document.EMBEDDABLE_URL] || doc[google.picker.Document.URL];
+	      document.getElementById('result').src = url;
+				document.getElementById('result_location').innerHTML = url;
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="info">
+			<p>
+				<button onclick="javascript:newPicker()" style="font-weight: bold">Import from your Google Docs</button>
+			</p>
+			<div>
+				<p>
+					<span id="result_location"></span>
+				</p>
+				<iframe height="480" width="720" id="result" seamless='true' src=""></iframe>
+			</div>
+      <p>
+        <a href="https://developers.google.com/picker/docs/">API Documentation</a>
+      </p>
+    </div>
+  </body>
+</html>
